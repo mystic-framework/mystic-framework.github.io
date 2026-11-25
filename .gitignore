@@ -46,3 +46,6 @@ public/blog-search-index.json
 
 # Blog Indexes
 public/blog-index-*.json
+
+# Schemas
+public/schema

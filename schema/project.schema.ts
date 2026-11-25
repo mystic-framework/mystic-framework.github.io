@@ -154,6 +154,7 @@ const DependenciesSchema = z.object({
  */
 export const ProjectSchema = z
   .object({
+    $schema: z.httpUrl().trim().optional(),
     name: ProjectNameSchema,
     version: SemverSchema.optional(),
     description: ProjectDescriptionSchema.optional(),

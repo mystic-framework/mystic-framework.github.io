@@ -108,15 +108,30 @@ const ProjectLanguageSchema = z.enum([
 const ProjectCxxStandardSchema = z.enum(['98', '11', '14', '17', '20', '23', '26']);
 
 /**
+ * CMake Option
+ *
+ * This schema defines the structure of a CMake option object.
+ * Each option must have a name and value. The description is optional.
+ */
+const CMakeOptionSchema = z
+  .string()
+  .trim()
+  .min(1, 'CMake option cannot be empty')
+  .regex(
+    /^[A-Za-z0-9_-]+=[^=\s]+$/,
+    'Expected format OptionName=OptionValue (e.g., BUILD_SHARED_LIBS=ON)',
+  );
+
+/**
  * Module Dependency Entry Schema
  *
  * This schema defines the structure of a module (first-party) dependency entry object.
- * Each module must have a name and version. The Git information of every module is hardcoded in
- * MysticDependency.cmake, so it isn't needed here.
+ * Each module must have a name and version.
  */
 const ModuleDependencyEntrySchema = z.object({
   name: z.string().trim().min(1, 'Dependency name cannot be empty'),
   version: SemverSchema,
+  cmake_options: z.array(CMakeOptionSchema).optional(),
   force_find_package: z.boolean().optional(),
 });
 
@@ -124,15 +139,15 @@ const ModuleDependencyEntrySchema = z.object({
  * Third-Party Dependency Entry Schema
  *
  * This schema defines the structure of a third-party dependency entry object.
- * Since there is no registry, the user has to provide all the information. Each third-party
- * dependency must have a name, version, and URL. Also, it can optionally have git_tag (if not
- * provided, "main" will be used) and force_find_package (if not provided, false will be used).
+ * Each third-party dependency must have a name, version, and URL. Also, it can optionally have
+ * git_tag (if not provided, "main" will be used).
  */
 const ThirdPartyDependencyEntrySchema = z.object({
   name: z.string().trim().min(1, 'Dependency name cannot be empty'),
   version: SemverSchema,
   git_url: GitUrlSchema,
   git_tag: GitTagSchema.optional(),
+  cmake_options: z.array(CMakeOptionSchema).optional(),
   force_find_package: z.boolean().optional(),
 });
 
